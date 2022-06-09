@@ -1,13 +1,15 @@
-    var calendar;
+       var calendar;
     var Calendar = FullCalendar.Calendar;
     var events = [];
     $(function() {
         if (!!scheds) {
             Object.keys(scheds).map(k => {
                 var row = scheds[k]
-                events.push({ id: row.id, title: row.title, start: row.start_datetime, end: row.end_datetime });
+                events.push({ id: row.id, title: row.title, start: row.start_datetime, end: row.end_datetime, color: row.fav_color });
             })
         }
+
+
         var date = new Date()
         var d = date.getDate(),
             m = date.getMonth(),
@@ -23,6 +25,7 @@
             themeSystem: 'bootstrap',
             //Random default events
             events: events,
+
             eventClick: function(info) {
                 var _details = $('#event-details-modal')
                 var id = info.event.id
@@ -31,6 +34,7 @@
                     _details.find('#description').text(scheds[id].description)
                     _details.find('#start').text(scheds[id].sdate)
                     _details.find('#end').text(scheds[id].edate)
+                    _details.find('#fav_color').text(scheds[id].fav_color)
                     _details.find('#edit,#delete').attr('data-id', id)
                     _details.modal('show')
                 } else {
@@ -62,8 +66,24 @@
                 _form.find('[name="description"]').val(scheds[id].description)
                 _form.find('[name="start_datetime"]').val(String(scheds[id].start_datetime).replace(" ", "T"))
                 _form.find('[name="end_datetime"]').val(String(scheds[id].end_datetime).replace(" ", "T"))
+                _form.find('[name="fav_color"]').val(scheds[id].fav_color)
                 $('#event-details-modal').modal('hide')
                 _form.find('[name="title"]').focus()
+            } else {
+                alert("Event is undefined");
+            }
+        })
+
+
+        // Export Button
+        $('#export').click(function() {
+
+            console.log(id);
+            var id = $(this).attr('data-id')
+            if (!!scheds[id]) {
+
+                getCSVData();
+
             } else {
                 alert("Event is undefined");
             }
